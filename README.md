@@ -129,7 +129,7 @@ Per API sollen Abfragen auf die Liste der Bücher möglich sein:
     - Gemeinsame genutzte Codeteile.
     - Abstraktion vs. Delegation
 
-### 9. Zusatzaufgaben I
+## Zusatzaufgaben I
 - Optimierung des Modells
   - Welche Teile können zusammen gezogen werden.
   - Welche Elemente brauchen eigene Objekte. (Entity vs. ValueObject)
@@ -146,7 +146,7 @@ Per API sollen Abfragen auf die Liste der Bücher möglich sein:
   - Erweitern der Tests, um die neuen API Endpunkte.
   - Überlegung: Wo braucht es ComponentTests, wo UnitTests?
 
-### 9. Zusatzaufgaben II
+## Zusatzaufgaben II
 - Weitere Relationen
   - Ein Publisher hat n Autoren.
   - Ein Autor ist unter n Publishern unter Vertrag.
@@ -159,7 +159,7 @@ Per API sollen Abfragen auf die Liste der Bücher möglich sein:
   - Erweitern der Tests, um die neuen API Endpunkte.
   - Überlegung: Wo braucht es ComponentTests, wo UnitTests?
   
-### 9. Zusatzaufgaben III
+## Zusatzaufgaben III
 - Die Applikation soll um eine Ausleihe erweitert werden.
 - Ein Buch kann von einem Nutzer ausgeliehen und zurückgegeben werden.
   - Eine Ausleihe hat n Bücher, einen Nutzer, das Ausleihdatum und die Laufzeit.
@@ -178,6 +178,6 @@ Per API sollen Abfragen auf die Liste der Bücher möglich sein:
   - der Datenbank
   - der Tests
 
-### 9. Zusatzaufgaben IV
+## Zusatzaufgaben IV
   - Erzeugung eines OpenAPI Speziifikation auf Grundlage der vorherschenden API
   - Einarbeitung in die entsprechenden Annotations und dem Generator.
