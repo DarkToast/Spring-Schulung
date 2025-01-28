@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+
+class Book {
+  + Long id
+  + Author author
+  + String title
+  + String publisher
+  + Int year
+  + String ean
+}
+
+class Author {
+  + Long id
+  + String? Anrede
+  + String vorname
+  + String nachname
+  + String webseite
+  + Int alter
+}
+
+class Publisher {
+  + Long id
+  + String firma
+  + String? Anrede
+  + String vorname
+  + String nachname
+  + String strasse
+  + String hausnummer
+  + String plz
+  + String ort
+}
+
+Book "1" --> "1" Publisher : "published by"
+Book "1..n" --> "1" Author : "written by"
+Publisher "0..n" <--> "0..n" Author : "contracts"
+Author "0..n" --> "n" Book : "writes"
+
+@enduml
