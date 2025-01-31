@@ -28,6 +28,45 @@ class BooksTest {
     }
 
     @Test
+    fun addBook() {
+        val bookJson = """
+            {
+                "author": "Author Name",
+                "title": "Book Title",
+                "publisher": "Publisher Name",
+                "year": 2023,
+                "ean": "1234567890123"
+            }
+        """.trimIndent()
+
+        val post = post("/api/books").contentType(MediaType.APPLICATION_JSON).content(bookJson)
+        mockMvc.perform(post).andExpect(status().isCreated)
+    }
+
+    @Test
+    fun addMalformedBook() {
+        val bookJson = "{ }"
+        val post = post("/api/books").contentType(MediaType.APPLICATION_JSON).content(bookJson)
+        mockMvc.perform(post).andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun addInvalidBook() {
+        val bookJson = """
+            {
+                "author": "Author With 12345 Digits",
+                "title": "Tooooooooooooooooooooooooooooooooooooooooooo long title",
+                "publisher": "Publisher Name",
+                "year": 2023,
+                "ean": "1234567890123"
+            }
+        """.trimIndent()
+
+        val post = post("/api/books").contentType(MediaType.APPLICATION_JSON).content(bookJson)
+        mockMvc.perform(post).andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun listIsEmpty() {
         mockMvc.perform(get("/api/books"))
             .andExpect(status().isOk)
@@ -65,22 +104,29 @@ class BooksTest {
     }
 
     @Test
-    fun addBook() {
-        val bookJson = """
-            {
-                "author": "Author Name",
-                "title": "Book Title",
-                "publisher": "Publisher Name",
-                "year": 2023,
-                "ean": "1234567890123"
-            }
-        """.trimIndent()
+    fun getBook() {
+        val location = createBook(Book(null, "Author 1", "Book Title 1", "Publisher 1", 2025, "123467890"))
 
-        val post = post("/api/books").contentType(MediaType.APPLICATION_JSON).content(bookJson)
-        mockMvc.perform(post).andExpect(status().isOk)
+        mockMvc.perform(get(location))
+            .andExpect(status().isOk)
+            .andExpect {
+                jsonPath("$.author").value("Author 1")
+                jsonPath("$.title").value("Book Title 1")
+                jsonPath("$.publisher").value("Publisher 1")
+                jsonPath("$.year").value(2025)
+                jsonPath("$.ean").value("123467890")
+            }
     }
 
-    fun createBook(book: Book) {
+    @Test
+    fun bookWasNotFound() {
+        mockMvc.perform(get("/api/books/123"))
+            .andExpect(status().isNotFound)
+    }
+
+
+
+    private fun createBook(book: Book): String {
         val bookJson = """
             {
                 "author": "${book.author}",
@@ -92,7 +138,10 @@ class BooksTest {
         """.trimIndent()
 
         val post = post("/api/books").contentType(MediaType.APPLICATION_JSON).content(bookJson)
-        mockMvc.perform(post).andExpect(status().isOk)
+        return mockMvc.perform(post)
+            .andExpect(status().isCreated)
+            .andReturn()
+            .response
+            .getHeaderValue("Location") as String
     }
-
 }
