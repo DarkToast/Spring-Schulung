@@ -8,7 +8,7 @@ import jakarta.persistence.Id
 
 @Entity(name = "BOOKS")
 class Book(
-    @Id @GeneratedValue(strategy = SEQUENCE) val id: Long,
+    @Id @GeneratedValue(strategy = SEQUENCE) val id: Long?,
     @Column(name = "AUTHOR", nullable = false) val author: String,
     @Column(name = "TITLE", nullable = false) val title: String,
     @Column(name = "PUBLISHER", nullable = false) val publisher: String,

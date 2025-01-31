@@ -15,7 +15,7 @@ class BookController(val service: BookService) {
     fun getAllBooks(): ResponseEntity<List<Book>> =
         ResponseEntity.ok().body(service.getAllBooks())
 
-    @PostMapping("/book")
+    @PostMapping("/books")
     fun addBook(@RequestBody book: Book): ResponseEntity<Book> {
         service.saveBook(book)
         return ResponseEntity.ok().build()
