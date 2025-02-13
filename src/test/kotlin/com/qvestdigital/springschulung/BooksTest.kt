@@ -83,7 +83,7 @@ class BookControllerIntegrationTest {
                 "title": "Book Title",
                 "publisher": "Publisher Name",
                 "year": 2023,
-                "ean": "1234567890123"
+                "ean": "1234567890128"
             }
         """.trimIndent()
 
