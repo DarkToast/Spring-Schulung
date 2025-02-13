@@ -35,11 +35,46 @@ class BookControllerIntegrationTest {
     private fun createAndSaveBooks(): List<Book> {
         val now = now().value
         val books = listOf(
-            Book(id = null, author = "Author One", title = "Book One", publisher = "Publisher One", year = now, ean = "1234567890123"),
-            Book(id = null, author = "Author Two", title = "Book Two", publisher = "Publisher Two", year = now - 1, ean = "1234567890124"),
-            Book(id = null, author = "Author One", title = "Book Three", publisher = "Publisher One", year = now - 2, ean = "1234567890125"),
-            Book(id = null, author = "Author Three", title = "Book Four", publisher = "Publisher Three", year = now - 3, ean = "1234567890126"),
-            Book(id = null, author = "Author Two", title = "Book Five", publisher = "Publisher Two", year = now - 3, ean = "1234567890127")
+            Book(
+                id = null,
+                author = "Author One",
+                title = "Book One",
+                publisher = "Publisher One",
+                year = now,
+                ean = "1234567890123"
+            ),
+            Book(
+                id = null,
+                author = "Author Two",
+                title = "Book Two",
+                publisher = "Publisher Two",
+                year = now - 1,
+                ean = "1234567890124"
+            ),
+            Book(
+                id = null,
+                author = "Author One",
+                title = "Book Three",
+                publisher = "Publisher One",
+                year = now - 2,
+                ean = "1234567890125"
+            ),
+            Book(
+                id = null,
+                author = "Author Three",
+                title = "Book Four",
+                publisher = "Publisher Three",
+                year = now - 3,
+                ean = "1234567890126"
+            ),
+            Book(
+                id = null,
+                author = "Author Two",
+                title = "Book Five",
+                publisher = "Publisher Two",
+                year = now - 3,
+                ean = "1234567890127"
+            )
         )
         return repository.saveAll(books)
     }
@@ -115,6 +150,26 @@ class BookControllerIntegrationTest {
     }
 
     @Test
+    fun saveBookWithEanAlreadyInUse() {
+        val duplicateBookJson = """
+            {
+                "author": "Another Author",
+                "title": "Another Book Title",
+                "publisher": "Another Publisher Name",
+                "year": 2024,
+                "ean": "1234567890123"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            post("/api/books")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(duplicateBookJson)
+        )
+        .andExpect(status().isConflict)
+    }
+
+    @Test
     fun getBooksByAuthorReturnsListWithBooks() {
         mockMvc.perform(get("/api/books?author=Author One"))
             .andExpect(status().isOk)
@@ -153,7 +208,7 @@ class BookControllerIntegrationTest {
 
     @Test
     fun getBooksByYearReturnsEmptyList() {
-      mockMvc.perform(get("/api/books?year=5"))
+        mockMvc.perform(get("/api/books?year=5"))
             .andExpect(status().isOk)
             .andExpectAll(jsonPath("$").isEmpty())
     }
@@ -210,10 +265,10 @@ class BookControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookJson)
         )
-        .andExpect(status().isOk)
-        .andExpect(jsonPath("$.id").value(book.id))
-        .andExpect(jsonPath("$.author").value("Updated Author"))
-        .andExpect(jsonPath("$.title").value("Updated Title"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(book.id))
+            .andExpect(jsonPath("$.author").value("Updated Author"))
+            .andExpect(jsonPath("$.title").value("Updated Title"))
     }
 
     @Test

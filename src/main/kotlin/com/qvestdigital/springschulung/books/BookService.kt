@@ -7,7 +7,12 @@ class BookService(val repository: BookRepository) {
 
     fun getBook(id: Long): Book? = repository.findById(id).orElse(null)
 
-    fun saveBook(book: Book): Book = repository.save(book)
+    fun saveBook(book: Book): Book {
+        if (repository.existsByEan(book.ean ?: "")) {
+            throw ServiceException.EanAlreadyInUse
+        }
+        return repository.save(book)
+    }
 
     fun updateBook(id: Long, book: Book): Book? =
         repository.findById(id).orElse(null)?.let {
