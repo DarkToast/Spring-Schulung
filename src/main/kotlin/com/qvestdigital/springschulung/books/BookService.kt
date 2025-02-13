@@ -1,5 +1,6 @@
 package com.qvestdigital.springschulung.books
 
+import com.qvestdigital.springschulung.books.Failure.EanAlreadyInUse
 import org.springframework.stereotype.Service
 
 @Service
@@ -9,7 +10,7 @@ class BookService(val repository: BookRepository) {
 
     fun saveBook(book: Book): Book {
         if (repository.existsByEan(book.ean ?: "")) {
-            throw ServiceException.EanAlreadyInUse
+            throw ServiceException(EanAlreadyInUse(book.ean))
         }
         return repository.save(book)
     }

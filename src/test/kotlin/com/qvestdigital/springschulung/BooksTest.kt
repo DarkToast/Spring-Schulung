@@ -35,46 +35,11 @@ class BookControllerIntegrationTest {
     private fun createAndSaveBooks(): List<Book> {
         val now = now().value
         val books = listOf(
-            Book(
-                id = null,
-                author = "Author One",
-                title = "Book One",
-                publisher = "Publisher One",
-                year = now,
-                ean = "1234567890123"
-            ),
-            Book(
-                id = null,
-                author = "Author Two",
-                title = "Book Two",
-                publisher = "Publisher Two",
-                year = now - 1,
-                ean = "1234567890124"
-            ),
-            Book(
-                id = null,
-                author = "Author One",
-                title = "Book Three",
-                publisher = "Publisher One",
-                year = now - 2,
-                ean = "1234567890125"
-            ),
-            Book(
-                id = null,
-                author = "Author Three",
-                title = "Book Four",
-                publisher = "Publisher Three",
-                year = now - 3,
-                ean = "1234567890126"
-            ),
-            Book(
-                id = null,
-                author = "Author Two",
-                title = "Book Five",
-                publisher = "Publisher Two",
-                year = now - 3,
-                ean = "1234567890127"
-            )
+            Book(id = null, author = "Author One", title = "Book One", publisher = "Publisher One", year = now, ean = "1234567890123"),
+            Book(id = null, author = "Author Two", title = "Book Two", publisher = "Publisher Two", year = now - 1, ean = "1234567890124"),
+            Book(id = null, author = "Author One", title = "Book Three", publisher = "Publisher One", year = now - 2, ean = "1234567890125"),
+            Book(id = null, author = "Author Three", title = "Book Four", publisher = "Publisher Three", year = now - 3, ean = "1234567890126"),
+            Book(id = null, author = "Author Two", title = "Book Five", publisher = "Publisher Two", year = now - 3, ean = "1234567890127")
         )
         return repository.saveAll(books)
     }
