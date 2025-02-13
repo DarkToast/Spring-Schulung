@@ -5,15 +5,18 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType.*
 import jakarta.persistence.Id
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 
 @Entity(name = "BOOKS")
 class Book(
     @Id @GeneratedValue(strategy = SEQUENCE) val id: Long?,
-    @Column(name = "AUTHOR", nullable = false) val author: String,
-    @Column(name = "TITLE", nullable = false) val title: String,
-    @Column(name = "PUBLISHER", nullable = false) val publisher: String,
-    @Column(name = "PUBLISHED") val year: Int,
-    @Column(name = "ISBN") val ean: String?
+    @Column(name = "AUTHOR", nullable = false) @field:NotBlank val author: String,
+    @Column(name = "TITLE", nullable = false) @field:NotBlank val title: String,
+    @Column(name = "PUBLISHER", nullable = false) @field:NotBlank val publisher: String,
+    @Column(name = "PUBLISHED") @field:NotNull val year: Int,
+    @Column(name = "ISBN") @field:Size(min = 13, max = 13) val ean: String?
 
     // EAN vs ISBN vs ISSN vs GTIN …
     // ISBN können weder als id verwendet, noch auf unique=true gesetzt werden.

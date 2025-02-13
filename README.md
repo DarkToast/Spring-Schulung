@@ -31,8 +31,19 @@ Neues Projekt anlegen mit:
 
 In der Grundübung soll ein einfacher REST-Service erstellt werden, der eine Liste von Büchern verwaltet.
 Ein Buch kann per CRUD angelegt, gelöscht, gelesen und geändert werden.
-Per API sollen Abfragen auf die Liste der Bücher möglich sein:
-* Alle Bücher
+
+Ein Buch hat folgende Eigenschaften:
++ `id: Long`
++ `author: Author`
++ `title: String`
++ `publisher: String`
++ `year: Int`
++ `ean: String`
+
+Per API sollen Abfragen auf die Bücher und eine Liste der Bücher möglich sein:
+* Anlegen eines neuen Buchs
+* Abfrage eines bestehenden Buchs
+* Abfrage aller Bücher
 * Die Bücher eines Autors
 * Die Bücher eines Jahres
 * Die Bücher, welche älter als N Jahren sind.
