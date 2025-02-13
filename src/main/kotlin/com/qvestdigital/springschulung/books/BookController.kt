@@ -4,9 +4,11 @@ import jakarta.validation.Valid
 import java.net.URI
 import java.time.LocalDate
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -27,6 +29,17 @@ class BookController(val service: BookService) {
         service.saveBook(book).let {
             ResponseEntity.created(URI.create("/api/books/${it.id}")).body(it)
         }
+
+    @PutMapping("/books/{id}")
+    fun updateBook(@PathVariable id: Long, @Valid @RequestBody book: Book): ResponseEntity<Book> =
+        service.updateBook(id, book)
+            ?.let { ResponseEntity.ok().body(it) }
+            ?: ResponseEntity.notFound().build()
+
+    @DeleteMapping("/books/{id}")
+    fun deleteBook(@PathVariable id: Long): ResponseEntity<Void> =
+        if (service.deleteBook(id)) ResponseEntity.noContent().build()
+        else ResponseEntity.notFound().build()
 
     @GetMapping("/books")
     fun getBooks(

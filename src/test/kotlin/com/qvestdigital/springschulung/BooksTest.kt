@@ -9,8 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -188,5 +190,66 @@ class BookControllerIntegrationTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$").isEmpty())
+    }
+
+    @Test
+    fun updateBookReturnsUpdatedBook() {
+        val book = repository.findAll().first()
+        val updatedBookJson = """
+            {
+                "author": "Updated Author",
+                "title": "Updated Title",
+                "publisher": "Updated Publisher",
+                "year": 2023,
+                "ean": "1234567890123"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            put("/api/books/${book.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedBookJson)
+        )
+        .andExpect(status().isOk)
+        .andExpect(jsonPath("$.id").value(book.id))
+        .andExpect(jsonPath("$.author").value("Updated Author"))
+        .andExpect(jsonPath("$.title").value("Updated Title"))
+    }
+
+    @Test
+    fun updateBookReturnsNotFound() {
+        val updatedBookJson = """
+            {
+                "author": "Updated Author",
+                "title": "Updated Title",
+                "publisher": "Updated Publisher",
+                "year": 2023,
+                "ean": "1234567890123"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            put("/api/books/999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedBookJson)
+        )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun deleteBookReturnsNoContent() {
+        val book = repository.findAll().first()
+
+        mockMvc.perform(delete("/api/books/${book.id}"))
+            .andExpect(status().isNoContent)
+
+        mockMvc.perform(get("/api/books/${book.id}"))
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun deleteBookReturnsNotFound() {
+        mockMvc.perform(delete("/api/books/999"))
+            .andExpect(status().isNotFound)
     }
 }

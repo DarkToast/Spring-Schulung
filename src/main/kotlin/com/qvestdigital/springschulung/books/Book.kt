@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 @Entity(name = "BOOKS")
-class Book(
+data class Book(
     @Id @GeneratedValue(strategy = SEQUENCE) val id: Long?,
     @Column(name = "AUTHOR", nullable = false) @field:NotBlank val author: String,
     @Column(name = "TITLE", nullable = false) @field:NotBlank val title: String,
