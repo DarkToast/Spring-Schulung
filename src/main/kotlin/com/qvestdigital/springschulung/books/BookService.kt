@@ -1,44 +1,58 @@
 package com.qvestdigital.springschulung.books
 
+import com.qvestdigital.springschulung.author.AuthorRepository
 import com.qvestdigital.springschulung.books.Failure.EanAlreadyInUse
 import org.springframework.stereotype.Service
 
 @Service
-class BookService(val repository: BookRepository) {
+class BookService(val bookRepository: BookRepository, val authorRepository: AuthorRepository) {
 
-    fun getBook(id: Long): Book? = repository.findById(id).orElse(null)
+    fun getBook(id: Long): Book? = bookRepository.findById(id).orElse(null)
 
-    fun saveBook(book: Book): Book {
-        if (repository.existsByEan(book.ean ?: "")) {
-            throw ServiceException(EanAlreadyInUse(book.ean))
+    fun saveBook(bookModel: BookWrite): Book? {
+        if(bookModel.ean != null) {
+            if(bookRepository.existsByEan(bookModel.ean)) {
+                throw ServiceException(EanAlreadyInUse(bookModel.ean))
+            }
         }
-        return repository.save(book)
+
+        val author = authorRepository.findById(bookModel.authorId).orElse(null) ?: return null
+        val book = Book(
+            id = null,
+            author = author,
+            title = bookModel.title,
+            publisher = bookModel.publisher,
+            year = bookModel.year,
+            ean = bookModel.ean
+        )
+        return bookRepository.save(book)
     }
 
-    fun updateBook(id: Long, book: Book): Book? =
-        repository.findById(id).orElse(null)?.let {
-            val updatedBook = it.copy(
-                author = book.author,
-                title = book.title,
-                publisher = book.publisher,
-                year = book.year,
-                ean = book.ean
-            )
-            repository.save(updatedBook)
-        }
+    fun updateBook(id: Long, bookModel: BookWrite): Book? {
+        val author = authorRepository.findById(bookModel.authorId).orElse(null) ?: return null
+        val existingBook = bookRepository.findById(id).orElse(null) ?: return null
+        val updatedBook = existingBook.copy(
+            author = author,
+            title = bookModel.title,
+            publisher = bookModel.publisher,
+            year = bookModel.year,
+            ean = bookModel.ean
+        )
+        return bookRepository.save(updatedBook)
+    }
 
     fun deleteBook(id: Long): Boolean {
-        if(!repository.existsById(id)) {
+        if(!bookRepository.existsById(id)) {
             return false
         }
 
-        repository.deleteById(id)
+        bookRepository.deleteById(id)
         return true
     }
 
     fun getBooksOlderThan(cutoffYear: Int): List<Book> =
-        repository.findBooksOlderThan(cutoffYear)
+        bookRepository.findBooksOlderThan(cutoffYear)
 
     fun searchBooks(author: String?, year: Int?): List<Book> =
-        repository.findByAuthorAndYear(author, year)
+        bookRepository.findByAuthorAndYear(author, year)
 }

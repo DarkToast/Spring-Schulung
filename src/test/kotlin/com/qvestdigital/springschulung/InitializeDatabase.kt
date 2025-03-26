@@ -2,6 +2,7 @@ package com.qvestdigital.springschulung
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.goebl.david.Webb
+import com.qvestdigital.springschulung.author.Author
 import com.qvestdigital.springschulung.books.Book
 import org.json.JSONObject
 import java.io.File
@@ -14,7 +15,8 @@ fun main() {
         readAllAsSequence()
             .drop(1) // Header
             .map { (author, title, publish, year, ean) ->
-                Book(0, author, title, publish, year.toInt(), ean.ifEmpty { null })
+                val au = Author(null, author, "")
+                Book(0, au, title, publish, year.toInt(), ean.ifEmpty { null })
             }
             .map(::JSONObject) // Needed for Request body
             .forEach {

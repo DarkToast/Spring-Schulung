@@ -1,5 +1,7 @@
 package com.qvestdigital.springschulung.books
 
+import com.qvestdigital.springschulung.author.Author
+import com.qvestdigital.springschulung.author.AuthorRepository
 import java.time.Year.now
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,30 +20,39 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
-class BookControllerIntegrationTest {
+class BooksTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    lateinit var repository: BookRepository
+    lateinit var bookRepo: BookRepository
+
+    @Autowired
+    lateinit var authorRepo: AuthorRepository
 
     @BeforeEach
     fun setup() {
-        repository.deleteAll()
-        createAndSaveBooks()
+        bookRepo.deleteAll()
+        authorRepo.deleteAll()
+        createAndSaveAuthorsAndBooks()
     }
 
-    private fun createAndSaveBooks(): List<Book> {
+    private fun createAndSaveAuthorsAndBooks(): List<Book> {
         val now = now().value
+
+        val authorOne = authorRepo.save(Author(id = null, name = "Author One", surname = "Author One Name"))
+        val authorTwo = authorRepo.save(Author(id = null, name = "Author Two", surname = "Author Two Name"))
+        val authorThree = authorRepo.save(Author(id = null, name = "Author Three", surname = "Author Three Name"))
+
         val books = listOf(
-            Book(id = null, author = "Author One", title = "Book One", publisher = "Publisher One", year = now, ean = "1234567890123"),
-            Book(id = null, author = "Author Two", title = "Book Two", publisher = "Publisher Two", year = now - 1, ean = "1234567890124"),
-            Book(id = null, author = "Author One", title = "Book Three", publisher = "Publisher One", year = now - 2, ean = "1234567890125"),
-            Book(id = null, author = "Author Three", title = "Book Four", publisher = "Publisher Three", year = now - 3, ean = "1234567890126"),
-            Book(id = null, author = "Author Two", title = "Book Five", publisher = "Publisher Two", year = now - 3, ean = "1234567890127")
+            Book(id = null, author = authorOne, title = "Book One", publisher = "Publisher One", year = now, ean = "1234567890123"),
+            Book(id = null, author = authorTwo, title = "Book Two", publisher = "Publisher Two", year = now - 1, ean = "1234567890124"),
+            Book(id = null, author = authorOne, title = "Book Three", publisher = "Publisher One", year = now - 2, ean = "1234567890125"),
+            Book(id = null, author = authorThree, title = "Book Four", publisher = "Publisher Three", year = now - 3, ean = "1234567890126"),
+            Book(id = null, author = authorTwo, title = "Book Five", publisher = "Publisher Two", year = now - 3, ean = "1234567890127")
         )
-        return repository.saveAll(books)
+        return bookRepo.saveAll(books)
     }
 
     private fun getYearOlderThan(years: Int): Int {
@@ -61,11 +72,11 @@ class BookControllerIntegrationTest {
 
     @Test
     fun getBookByIdReturnsBook() {
-        val book = repository.findAll().first()
+        val book = bookRepo.findAll().first()
         mockMvc.perform(get("/api/books/${book.id}"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(book.id))
-            .andExpect(jsonPath("$.author").value(book.author))
+            .andExpect(jsonPath("$.author.name").value(book.author.name))
             .andExpect(jsonPath("$.title").value(book.title))
     }
 
@@ -77,9 +88,11 @@ class BookControllerIntegrationTest {
 
     @Test
     fun addBookReturnsCreatedBook() {
+        val author = authorRepo.queryAuthorsByName("Author Two").first()
+
         val bookJson = """
             {
-                "author": "Author Name",
+                "authorId": ${author.id},
                 "title": "Book Title",
                 "publisher": "Publisher Name",
                 "year": 2023,
@@ -94,7 +107,7 @@ class BookControllerIntegrationTest {
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.author").value("Author Name"))
+            .andExpect(jsonPath("$.author.name").value("Author Two"))
             .andExpect(jsonPath("$.title").value("Book Title"))
     }
 
@@ -116,9 +129,11 @@ class BookControllerIntegrationTest {
 
     @Test
     fun saveBookWithEanAlreadyInUse() {
+        val author = authorRepo.queryAuthorsByName("Author Two").first()
+
         val duplicateBookJson = """
             {
-                "author": "Another Author",
+                "authorId": ${author.id},
                 "title": "Another Book Title",
                 "publisher": "Another Publisher Name",
                 "year": 2024,
@@ -142,8 +157,8 @@ class BookControllerIntegrationTest {
                 jsonPath("$").exists(),
                 jsonPath("$").isArray(),
                 jsonPath("$.length()").value(2),
-                jsonPath("$[0].author").value("Author One"),
-                jsonPath("$[1].author").value("Author One")
+                jsonPath("$[0].author.name").value("Author One"),
+                jsonPath("$[1].author.name").value("Author One")
             )
     }
 
@@ -165,9 +180,9 @@ class BookControllerIntegrationTest {
                 jsonPath("$").isArray(),
                 jsonPath("$.length()").value(2),
                 jsonPath("$[0].year").value(2022),
-                jsonPath("$[0].author").value("Author Three"),
+                jsonPath("$[0].author.name").value("Author Three"),
                 jsonPath("$[1].year").value(2022),
-                jsonPath("$[1].author").value("Author Two")
+                jsonPath("$[1].author.name").value("Author Two")
             )
     }
 
@@ -198,7 +213,7 @@ class BookControllerIntegrationTest {
                 jsonPath("$").exists(),
                 jsonPath("$").isArray(),
                 jsonPath("$.length()").value(1),
-                jsonPath("$[0].author").value("Author Three"),
+                jsonPath("$[0].author.name").value("Author Three"),
                 jsonPath("$[0].year").value(2022)
             )
     }
@@ -214,10 +229,12 @@ class BookControllerIntegrationTest {
 
     @Test
     fun updateBookReturnsUpdatedBook() {
-        val book = repository.findAll().first()
+        val book = bookRepo.findAll().first()
+        val author = authorRepo.queryAuthorsByName("Author Two").first()
+
         val updatedBookJson = """
             {
-                "author": "Updated Author",
+                "authorId": ${author.id},
                 "title": "Updated Title",
                 "publisher": "Updated Publisher",
                 "year": 2023,
@@ -232,7 +249,7 @@ class BookControllerIntegrationTest {
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(book.id))
-            .andExpect(jsonPath("$.author").value("Updated Author"))
+            .andExpect(jsonPath("$.author.name").value("Author Two"))
             .andExpect(jsonPath("$.title").value("Updated Title"))
     }
 
@@ -240,7 +257,7 @@ class BookControllerIntegrationTest {
     fun updateBookReturnsNotFound() {
         val updatedBookJson = """
             {
-                "author": "Updated Author",
+                "author": 2,
                 "title": "Updated Title",
                 "publisher": "Updated Publisher",
                 "year": 2023,
@@ -258,7 +275,7 @@ class BookControllerIntegrationTest {
 
     @Test
     fun deleteBookReturnsNoContent() {
-        val book = repository.findAll().first()
+        val book = bookRepo.findAll().first()
 
         mockMvc.perform(delete("/api/books/${book.id}"))
             .andExpect(status().isNoContent)
