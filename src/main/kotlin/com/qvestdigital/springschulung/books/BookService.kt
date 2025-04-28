@@ -17,27 +17,14 @@ class BookService(val bookRepository: BookRepository, val authorRepository: Auth
         }
 
         val author = authorRepository.findById(bookModel.authorId).orElse(null) ?: return null
-        val book = Book(
-            id = null,
-            author = author,
-            title = bookModel.title,
-            publisher = bookModel.publisher,
-            year = bookModel.year,
-            ean = bookModel.ean
-        )
+        val book = Book.create(author, bookModel)
         return bookRepository.save(book)
     }
 
     fun updateBook(id: Long, bookModel: BookWrite): Book? {
         val author = authorRepository.findById(bookModel.authorId).orElse(null) ?: return null
         val existingBook = bookRepository.findById(id).orElse(null) ?: return null
-        val updatedBook = existingBook.copy(
-            author = author,
-            title = bookModel.title,
-            publisher = bookModel.publisher,
-            year = bookModel.year,
-            ean = bookModel.ean
-        )
+        val updatedBook = existingBook.update(author, bookModel)
         return bookRepository.save(updatedBook)
     }
 
