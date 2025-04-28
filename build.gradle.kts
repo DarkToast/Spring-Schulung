@@ -50,3 +50,7 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+springBoot {
+    mainClass = "com.qvestdigital.springschulung.ApplicationKt"
+}

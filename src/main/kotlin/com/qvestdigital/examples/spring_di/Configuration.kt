@@ -43,7 +43,9 @@ class Configuration {
     @Autowired
     private lateinit var databaseProps: DatabaseProperties
 
+
     @Bean
+    @Suppress("UnusedVariable", "unused")
     fun databaseAccess(): DatabaseAccess {
         val altDb = DatabaseAccess(
             databaseProps.url, databaseProps.username, databaseProps.password
