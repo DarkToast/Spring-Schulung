@@ -1,0 +1,56 @@
+@startuml
+actor User
+participant "BookController" as BC
+participant "BookService" as BS
+participant "BookRepository" as BR
+
+User -> BC: GET /api/books/{id}
+BC -> BS: getBook(id)
+BS -> BR: findById(id)
+BR --> BS: Book
+BS --> BC: Book
+BC --> User: ResponseEntity<Book>
+
+User -> BC: POST /api/books
+BC -> BS: saveBook(book)
+BS -> BR: save(book)
+BR --> BS: Book
+BS --> BC: Book
+BC --> User: ResponseEntity<Book>
+
+User -> BC: PUT /api/books/{id}
+BC -> BS: updateBook(id, book)
+BS -> BR: findById(id)
+BR --> BS: Book
+BS -> BR: save(updatedBook)
+BR --> BS: Book
+BS --> BC: Book
+BC --> User: ResponseEntity<Book>
+
+User -> BC: DELETE /api/books/{id}
+BC -> BS: deleteBook(id)
+BS -> BR: existsById(id)
+BR --> BS: Boolean
+alt exists
+    BS -> BR: deleteById(id)
+    BR --> BS: void
+    BS --> BC: true
+else not exists
+    BS --> BC: false
+end
+BC --> User: ResponseEntity<Void>
+
+User -> BC: GET /api/books
+alt olderThan != null
+    BC -> BS: getBooksOlderThan(cutoffYear)
+    BS -> BR: findBooksOlderThan(cutoffYear)
+    BR --> BS: List<Book>
+    BS --> BC: List<Book>
+else
+    BC -> BS: searchBooks(author, year)
+    BS -> BR: findByAuthorAndYear(author, year)
+    BR --> BS: List<Book>
+    BS --> BC: List<Book>
+end
+BC --> User: ResponseEntity<List<Book>>
+@enduml
