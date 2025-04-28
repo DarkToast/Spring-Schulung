@@ -10,7 +10,13 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
+
+externalServiceConfig:
+  url: "Hallo"
+  credentials:
+    username: "Welt"
+    password: "!"
+  parameter:
+    - "foo"
+    - "bar"
+    - "baz"
