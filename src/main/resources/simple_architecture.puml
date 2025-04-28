@@ -1,0 +1,15 @@
+@startuml
+
+class Configuration
+class Controller
+class Service
+class Repository
+class Book
+
+Controller -right-> Service: steuert
+Controller -[dashed]-> Book: serialisier / deserialisiert
+Service -right-> Repository: speicher in
+Service -[dashed]-> Book : verwaltet
+Configuration -[dashed]-> Service: konfiguriert
+Configuration -[dashed]-> Repository: konfiguriert
+@enduml
