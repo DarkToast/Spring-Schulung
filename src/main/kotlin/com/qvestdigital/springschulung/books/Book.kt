@@ -29,7 +29,26 @@ data class Book(
     // ISBN können weder als id verwendet, noch auf unique=true gesetzt werden.
     // SBN wurden in 1966 eingeführt, ISBN-10 in 1970, ISBN-13 in 2007.
     // Ausgaben vor 1966 haben somit keinen eindeutigen Identifier.
-)
+) {
+    fun update(author: Author, write: BookWrite): Book = this.copy(
+        author = author,
+        title = write.title,
+        publisher = write.publisher,
+        year = write.year,
+        ean = write.ean
+    )
+
+    companion object {
+        fun create(author: Author, write: BookWrite): Book = Book(
+            id = null,
+            author = author,
+            title = write.title,
+            publisher = write.publisher,
+            year = write.year,
+            ean = write.ean
+        )
+    }
+}
 
 data class BookWrite(
     val authorId: Long,
