@@ -31,8 +31,8 @@ class Publisher {
   + String ort
 }
 
-Book "1" --> "1" Publisher : "published by"
-Book "1..n" --> "1" Author : "written by"
+Book "1" -up-> "1" Publisher : "published by"
+Book "1..n" -down-> "1" Author : "written by"
 Publisher "0..n" <--> "0..n" Author : "contracts"
 Author "0..n" --> "n" Book : "writes"
 

@@ -1,0 +1,13 @@
+@startuml
+left to right direction
+
+class Book {
+  + Long id
+  + Author author
+  + String title
+  + String publisher
+  + Int year
+  + String ean
+}
+
+@enduml

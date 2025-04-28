@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+
+class Book {
+  + Long id
+  + Author author
+  + String title
+  + String publisher
+  + Int year
+  + String ean
+}
+
+class Author {
+  + Long id
+  + String? Anrede
+  + String vorname
+  + String nachname
+  + String webseite
+  + Int alter
+}
+
+Book "1..n" --> "1" Author : "written by"
+Author "0..n" --> "n" Book : "writes"
+
+@enduml
