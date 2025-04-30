@@ -17,14 +17,14 @@ class AuthorController(val authorService: AuthorService) {
     }
 
     @GetMapping("/authors")
-    fun getAuthors(): ResponseEntity<List<Author>> =
-        ResponseEntity.ok(authorService.getAllAuthors())
+    fun getAuthors(): ResponseEntity<List<AuthorRead>> =
+        authorService.getAllAuthors().map { AuthorRead.from(it) }.run { ResponseEntity.ok(this) }
 
     @GetMapping("/authors/{id}")
-    fun getAuthorById(@PathVariable id: Long): ResponseEntity<Author> {
+    fun getAuthorById(@PathVariable id: Long): ResponseEntity<AuthorRead> {
         val author = authorService.getAuthorById(id)
         return if (author != null) {
-            ResponseEntity.ok(author)
+            ResponseEntity.ok(AuthorRead.from(author))
         } else {
             ResponseEntity.status(NOT_FOUND).build()
         }

@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import javax.sql.DataSource
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -30,6 +31,9 @@ class BooksTest {
 
     @Autowired
     lateinit var authorRepo: AuthorRepository
+
+    @Autowired
+    lateinit var dataSource: DataSource
 
     @BeforeEach
     fun setup() {

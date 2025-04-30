@@ -3,6 +3,7 @@ package com.qvestdigital.springschulung.books
 import com.qvestdigital.springschulung.author.AuthorRepository
 import com.qvestdigital.springschulung.books.Failure.EanAlreadyInUse
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BookService(val bookRepository: BookRepository, val authorRepository: AuthorRepository) {
@@ -21,6 +22,7 @@ class BookService(val bookRepository: BookRepository, val authorRepository: Auth
         return bookRepository.save(book)
     }
 
+    @Transactional
     fun updateBook(id: Long, bookModel: BookWrite): Book? {
         val author = authorRepository.findById(bookModel.authorId).orElse(null) ?: return null
         val existingBook = bookRepository.findById(id).orElse(null) ?: return null
