@@ -1,7 +1,6 @@
 package com.qvestdigital.springschulung.author
 
 import com.qvestdigital.springschulung.books.Book
-import com.qvestdigital.springschulung.books.BookRead
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -10,6 +9,9 @@ import jakarta.persistence.GenerationType.SEQUENCE
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 
 @Entity(name = "AUTHORS")
 data class Author(
@@ -30,7 +32,12 @@ data class Author(
 )
 
 data class AuthorWrite(
+    @field:NotEmpty(message = "Name cannot be empty")
+    @field:Size(min = 2, max = 30, message = "Name must be between 2 and 30 characters")
     val name: String,
+
+    @field:NotEmpty(message = "Surname cannot be empty")
+    @field:Size(min = 2, max = 30, message = "Surname must be between 2 and 30 characters")
     val surname: String
 )
 

@@ -24,10 +24,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    implementation("org.hibernate.validator:hibernate-validator:7.0.0.Final")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("jakarta.validation:jakarta.validation-api:3.0.0")
-    implementation("org.hibernate.validator:hibernate-validator:7.0.0.Final")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")

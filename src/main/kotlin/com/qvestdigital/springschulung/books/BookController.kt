@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -44,6 +45,7 @@ class BookController(val service: BookService) {
             )
         ]
     )
+    @PreAuthorize("hasRole('READ')")
     @GetMapping("/books/{id}")
     fun getBook(@PathVariable id: Long): ResponseEntity<*> =
         service.getBook(id)
@@ -65,6 +67,7 @@ class BookController(val service: BookService) {
             ApiResponse(responseCode = "400", description = "Invalid input", content = [])
         ]
     )
+    @PreAuthorize("hasRole('WRITE')")
     @PostMapping("/books")
     fun addBook(@Valid @RequestBody bookModel: BookWrite): ResponseEntity<*> {
         val savedBook = service.saveBook(bookModel) ?: return ResponseEntity.status(NOT_FOUND)
@@ -92,6 +95,7 @@ class BookController(val service: BookService) {
             )
         ]
     )
+    @PreAuthorize("hasRole('WRITE')")
     @PutMapping("/books/{id}")
     fun updateBook(@PathVariable id: Long, @Valid @RequestBody bookModel: BookWrite): ResponseEntity<*> {
         val updatedBook = service.updateBook(id, bookModel) ?: return ResponseEntity.status(NOT_FOUND)
@@ -115,6 +119,7 @@ class BookController(val service: BookService) {
             )
         ]
     )
+    @PreAuthorize("hasRole('WRITE')")
     @DeleteMapping("/books/{id}")
     fun deleteBook(@PathVariable id: Long): ResponseEntity<*> =
         if (service.deleteBook(id)) ResponseEntity.noContent().build<Any>()
@@ -134,6 +139,7 @@ class BookController(val service: BookService) {
 
 
     @GetMapping("/books")
+    @PreAuthorize("hasRole('READ')")
     fun getBooks(
         @RequestParam(required = false) author: String?,
         @RequestParam(required = false) year: Int?,
