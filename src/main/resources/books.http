@@ -1,0 +1,42 @@
+
+### GET all books
+GET http://localhost:8080/api/books
+
+### GET books by author
+GET http://localhost:8080/api/books?author=Author%20Name
+
+### GET books by year
+GET http://localhost:8080/api/books?year=2023
+
+### GET books older than a certain number of years
+GET http://localhost:8080/api/books?older-than=5
+
+### GET a book by ID
+GET http://localhost:8080/api/books/1
+
+### POST add a new book
+POST http://localhost:8080/api/books
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "title": "New Book Title",
+  "publisher": "Publisher Name",
+  "year": 2023,
+  "ean": "1234567890123"
+}
+
+### PUT update an existing book
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "title": "Updated Book Title",
+  "publisher": "Updated Publisher Name",
+  "year": 2024,
+  "ean": "1234567890124"
+}
+
+### DELETE a book by ID
+DELETE http://localhost:8080/api/books/1

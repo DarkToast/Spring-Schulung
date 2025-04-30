@@ -146,19 +146,4 @@ class BookController(val service: BookService) {
         val bookReads = books.map { it.toBookRead() }
         return ResponseEntity.ok().body(bookReads)
     }
-
-    private fun Book.toBookRead(): BookRead {
-        return BookRead(
-            id = this.id,
-            author = AuthorRead(
-                authorId = this.author.id!!,
-                name = this.author.name,
-                surname = this.author.surname
-            ),
-            title = this.title,
-            publisher = this.publisher,
-            year = this.year,
-            ean = this.ean
-        )
-    }
 }
