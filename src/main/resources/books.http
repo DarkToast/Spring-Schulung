@@ -1,6 +1,7 @@
 
 ### GET all books
 GET http://localhost:8080/api/books
+Authorization: Basic {{username}} {{password}}
 
 ### GET books by author
 GET http://localhost:8080/api/books?author=Author%20Name

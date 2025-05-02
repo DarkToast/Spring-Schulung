@@ -1,0 +1,12 @@
+@startuml
+participant Client
+participant "Authorization Server" as AuthServer
+participant "Resource Server" as ResourceServer
+
+Client -> AuthServer: Authorization Request
+AuthServer -> Client: Authorization Code
+Client -> AuthServer: Access Token Request (mit Authorization Code)
+AuthServer -> Client: Access Token
+Client -> ResourceServer: Request mit Access Token
+ResourceServer -> Client: Geschützte Ressource
+@enduml

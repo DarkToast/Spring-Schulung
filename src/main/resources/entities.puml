@@ -1,0 +1,16 @@
+@startuml
+class Person {
+    + String name
+    + String email
+    + String phone
+}
+
+map PERSON_TABLE {
+ name => String
+ email => String
+ phone  => String
+}
+
+Person -right-> PERSON_TABLE
+
+@enduml

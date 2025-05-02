@@ -4,12 +4,14 @@ import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.bind.Name
 import org.springframework.stereotype.Component
 
-@Component
+@Component("MyBeanName")
 class AddressService() {
+    @Name("mainDatabaseAccess")
     @Autowired
-    private lateinit var databaseAccess: DatabaseAccess
+    private lateinit var databaseAccess: Database
 
     val logger = KotlinLogging.logger {}
 
