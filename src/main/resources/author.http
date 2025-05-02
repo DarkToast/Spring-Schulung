@@ -4,8 +4,9 @@ Content-Type: application/json
 Authorization: Basic {{username}} {{password}}
 
 {
-  "name": "g",
+  "name": "Max",
   "surname": "Musterfrau"
+}
 
 ### GET alle Autoren abrufen
 GET http://localhost:8080/api/authors
