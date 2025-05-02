@@ -2,7 +2,6 @@ package com.qvestdigital.springschulung.books
 
 import com.qvestdigital.springschulung.author.Author
 import com.qvestdigital.springschulung.author.AuthorRepository
-import java.time.Year.now
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,13 +9,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.MediaType
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.RequestPostProcessor
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.Year.now
 import javax.sql.DataSource
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -63,9 +65,13 @@ class BooksTest {
         return now().value - years
     }
 
+    fun writer(): RequestPostProcessor {
+        return user("writer").roles("WRITE", "READ")
+    }
+
     @Test
     fun getAllBooksReturnsListWithBooks() {
-        mockMvc.perform(get("/api/books"))
+        mockMvc.perform(get("/api/books").with(writer()))
             .andExpect(status().isOk)
             .andExpectAll(
                 jsonPath("$").exists(),
@@ -77,7 +83,7 @@ class BooksTest {
     @Test
     fun getBookByIdReturnsBook() {
         val book = bookRepo.findAll().first()
-        mockMvc.perform(get("/api/books/${book.id}"))
+        mockMvc.perform(get("/api/books/${book.id}").with(writer()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(book.id))
             .andExpect(jsonPath("$.author.name").value(book.author.name))
@@ -86,7 +92,7 @@ class BooksTest {
 
     @Test
     fun getBookByIdReturnsNotFound() {
-        mockMvc.perform(get("/api/books/999"))
+        mockMvc.perform(get("/api/books/999").with(writer()))
             .andExpect(status().isNotFound)
     }
 
@@ -106,6 +112,7 @@ class BooksTest {
 
         mockMvc.perform(
             post("/api/books")
+                .with(writer())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(bookJson)
         )
@@ -125,6 +132,7 @@ class BooksTest {
 
         mockMvc.perform(
             post("/api/books")
+                .with(writer())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(invalidBookJson)
         )
@@ -147,15 +155,16 @@ class BooksTest {
 
         mockMvc.perform(
             post("/api/books")
+                .with(writer())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(duplicateBookJson)
         )
-        .andExpect(status().isConflict)
+            .andExpect(status().isConflict)
     }
 
     @Test
     fun getBooksByAuthorReturnsListWithBooks() {
-        mockMvc.perform(get("/api/books?author=Author One"))
+        mockMvc.perform(get("/api/books?author=Author One").with(writer()))
             .andExpect(status().isOk)
             .andExpectAll(
                 jsonPath("$").exists(),
@@ -168,7 +177,7 @@ class BooksTest {
 
     @Test
     fun getBooksByAuthorReturnsEmptyList() {
-        mockMvc.perform(get("/api/books?author=Nonexistent Author"))
+        mockMvc.perform(get("/api/books?author=Nonexistent Author").with(writer()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$").isEmpty())
@@ -177,7 +186,7 @@ class BooksTest {
     @Test
     fun getBooksByYearReturnsListWithBooks() {
         val year = getYearOlderThan(3)
-        mockMvc.perform(get("/api/books?year=$year"))
+        mockMvc.perform(get("/api/books?year=$year").with(writer()))
             .andExpect(status().isOk)
             .andExpectAll(
                 jsonPath("$").exists(),
@@ -192,14 +201,14 @@ class BooksTest {
 
     @Test
     fun getBooksByYearReturnsEmptyList() {
-        mockMvc.perform(get("/api/books?year=5"))
+        mockMvc.perform(get("/api/books?year=5").with(writer()))
             .andExpect(status().isOk)
             .andExpectAll(jsonPath("$").isEmpty())
     }
 
     @Test
     fun getBooksOlderThanReturnsListWithBooks() {
-        mockMvc.perform(get("/api/books?older-than=2"))
+        mockMvc.perform(get("/api/books?older-than=2").with(writer()))
             .andExpect(status().isOk)
             .andExpectAll(
                 jsonPath("$").exists(),
@@ -211,7 +220,7 @@ class BooksTest {
     @Test
     fun searchBooksByAuthorAndYearReturnsListWithBooks() {
         val year = getYearOlderThan(3)
-        mockMvc.perform(get("/api/books?author=Author Three&year=$year"))
+        mockMvc.perform(get("/api/books?author=Author Three&year=$year").with(writer()))
             .andExpect(status().isOk)
             .andExpectAll(
                 jsonPath("$").exists(),
@@ -225,7 +234,7 @@ class BooksTest {
     @Test
     fun searchBooksReturnsEmptyList() {
         val year = getYearOlderThan(0)
-        mockMvc.perform(get("/api/books?author=Nonexistent Author&year=$year"))
+        mockMvc.perform(get("/api/books?author=Nonexistent Author&year=$year").with(writer()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$").isEmpty())
@@ -248,6 +257,7 @@ class BooksTest {
 
         mockMvc.perform(
             put("/api/books/${book.id}")
+                .with(writer())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookJson)
         )
@@ -271,6 +281,7 @@ class BooksTest {
 
         mockMvc.perform(
             put("/api/books/999")
+                .with(writer())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedBookJson)
         )
@@ -281,16 +292,16 @@ class BooksTest {
     fun deleteBookReturnsNoContent() {
         val book = bookRepo.findAll().first()
 
-        mockMvc.perform(delete("/api/books/${book.id}"))
+        mockMvc.perform(delete("/api/books/${book.id}").with(writer()))
             .andExpect(status().isNoContent)
 
-        mockMvc.perform(get("/api/books/${book.id}"))
+        mockMvc.perform(get("/api/books/${book.id}").with(writer()))
             .andExpect(status().isNotFound)
     }
 
     @Test
     fun deleteBookReturnsNotFound() {
-        mockMvc.perform(delete("/api/books/999"))
+        mockMvc.perform(delete("/api/books/999").with(writer()))
             .andExpect(status().isNotFound)
     }
 }

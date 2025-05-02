@@ -35,6 +35,7 @@ dependencies {
     runtimeOnly("com.h2database:h2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("com.goebl:david-webb:1.3.0")        // Alternative for Http Client & Postman
     testImplementation("com.jsoizo:kotlin-csv-jvm:1.10.0")  // Read standard CSV files into Lists
