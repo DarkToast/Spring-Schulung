@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
-
 
 
 @ConfigurationProperties(prefix = "external-service-config")
@@ -44,13 +42,18 @@ class Configuration {
     private lateinit var databaseProps: DatabaseProperties
 
 
-    @Bean
+    @Bean("as400Access")
     @Suppress("UnusedVariable", "unused")
-    fun databaseAccess(): DatabaseAccess {
-        val altDb = DatabaseAccess(
+    fun as400Access(): Database {
+        val altDb = AS400Access(
             databaseProps.url, databaseProps.username, databaseProps.password
         )
 
-        return DatabaseAccess(dbUrl, dbUsername, dbPassword)
+        return AS400Access(dbUrl, dbUsername, dbPassword)
+    }
+
+    @Bean("postgresAccess")
+    fun postgresAccess(): Database {
+        return PostgresAccess(dbUrl, dbUsername, dbPassword)
     }
 }
