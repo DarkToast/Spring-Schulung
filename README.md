@@ -1,6 +1,6 @@
 # Spring Boot Schulung
 
-## Übungsbeispiel: Archiv-Verwaltung
+## Übungsbeispiel: Buch-Verwaltung
 
 Zum Erklären und Lernen der Spring Grundlagen und Konzepte soll ein eigener Server von Grund auf aufgesetzt und
 implementiert werden.
@@ -20,12 +20,10 @@ Neues Projekt anlegen mit:
 
 - Spring Boot
 - Kotlin
-- Temurin 21
+- Temurin JDK 21
 - DevTools
 - starter-web
 - H2 Datenbank
-
-(Projekt-spezifische maven config hinzufügen)
 
 ## Grundübung
 
@@ -34,7 +32,7 @@ Ein Buch kann per CRUD angelegt, gelöscht, gelesen und geändert werden.
 
 Ein Buch hat folgende Eigenschaften:
 + `id: Long`
-+ `author: Author`
++ `author: String`
 + `title: String`
 + `publisher: String`
 + `year: Int`
@@ -51,45 +49,48 @@ Per API sollen Abfragen auf die Bücher und eine Liste der Bücher möglich sein
 
 ### 1. Die Applikation
 - Application starten
-- Der erste Hello World Response.
+- Die erste Hello World Ausgabe mit Spring Bean.
 - Grundlagen der Dependency Injection
 
-### 2. Der Controller
+### 2. Die API
+- Anhand der oben beschrieben Operationen eine REST API designen und skizzieren.
+  z.B. per .http-File oder im Postman oder vergleichbaren Tools.
+  - API Design als Top-Down Ansatz.
 
+### 3. Der Controller
 - Einen Controller per Annotations erstellen
   (@Controller oder @RestController, wenn spring-boot-starter-web vorhanden)
-  - weiter Grundlagen der Dependeny Injection
-- Den Controller um die GET Operation für Bücher anpassen. 
-  - API Design als Top-Down Ansatz.
+  - weiter Grundlagen der Dependency Injection
+- Den Controller um die oben beschrieben und als API designten Operationen
+  für Bücher erstellen und die API umsetzen.
   - Verständnis des Spring Routings.
   - Vorerst nur mit Dummy-Daten.
 - http-client oder Browser für den Aufruf verwenden
   - Postman oder besser IntelliJ Ultimate
   - Verständnis für HTTP Request und Response Calls
 
-### 3. Der Service
-- Die Dummy-Daten aus dem Controller in einen Service ziehen.
-- Die GET Operation in den Service auslagern.
-- Grundlagen der Basisarchitektur
-  - Separation of Concerns
-  - Dependency Injection
-- Einen GET für eine Liste von Books erstellen und zurückgeben.
-  - Anpassen von Service und Controller.
-  - Entweder per Hand coden oder aus CSV-Liste einlesen.
+### 4. Validierung
+- Grundlagen der Jakarta Validation Annotations
+- Grundlagen der Spring Implementierung
+  - Annotations
+  - eigene Cross-Fields Validierungen
+  - Spring Web Exception-Handling
+  - Fehlerverhalten auf API Ebene
 
-### 4. Der Test
+### 5. Der Test
 - Einführung von SpringBootTest
 - Erster MVC Test gegen die API
   - Einzelnes Buch
   - Liste von Büchern
+  - restliche API Calls 
 - Wiederholung der Testpyramide.
   - Unterscheidung Unit und Componenttest
 - Hints:
   - SpringBootTest & AutoConfigureMockMvc
   - mockMvc.perform(…).andExpect(…)
-  - MockBeans: MockK statt Mockito
+  - MockitoBean: Mockito
 
-### 5. Die Datenbank
+### 6. Die Datenbank
 - H2 Datenbank als Testdatenbank hinzufügen
 - Konfiguration, um das Schema generieren zu lassen.
 - Hints:
@@ -98,33 +99,8 @@ Per API sollen Abfragen auf die Bücher und eine Liste der Bücher möglich sein
 - Die Klasse Book zur Entity umbauen.
   - JpaRepository, @Id, @Entity, nullables, uniques.
   - mögliche Probleme: reserved commands als identifier (Bsp. "year")
-- Die Applikation um eine POST - Schnittstelle erweitern, um Bücher hinzuzufügen.
-- Erweitern der Tests um die Schnittstelle zu testen:
-  - Buch anlegen
-  - Erstelltes Buch abfragen
-  - N Bücher anlegen
-  - Eine Liste der Bücher abfragen.
 
-### 6. Weitere CRUD Operationen
-- Erweitern der Applikation um die noch fehlenden CRUD Operationen:
-  - Update eines Buchs
-  - Löschen eines Buchs
-  - CRUD auf API Ebene vs. CRUD auf DB Ebene.
-  - Domain Lifecycle
-  - Blick in die Datenbank
-- Erweitern der Tests um die neuen Operationen.
-
-### 7. Filter und Suche
-- Erweitern der API um Filter- und Suchparameter
-  - Alle Bücher
-  - Die Bücher eines Autors
-  - Die Bücher eines Jahres
-  - Die Bücher, welche älter als N Jahren sind.
-  - Eine Kombination aus zwei Abfragen.
-- API Design Architekturüberlegungen zur Suche und Filter
-- Entsprechende MVC Tests schreiben
-
-### 8. Erweitern des Modells
+### 7. Erweitern des Modells um Relationen
 - Erweiterung um Authoren und Publisher Informationen.
   - 1 Buch hat 1 Autor und 1 Publisher.
   - 1 Author hat n Bücher
@@ -139,6 +115,13 @@ Per API sollen Abfragen auf die Bücher und eine Liste der Bücher möglich sein
     - Resource bei REST vs. Entity im Modell.
     - Gemeinsame genutzte Codeteile.
     - Abstraktion vs. Delegation
+
+### 8. Absicherung der API durch eine Benutzerverwaltung
+- Grundlagen OAuth2
+- Grundlagen Spring Security
+- Anlage einer kleinen In-Memory Userdatenbank.
+- Absichern der API anhand eines Rollenkonzepts.
+- Einarbeitung der Sicherheitsschicht in die Tests.
 
 ## Zusatzaufgaben I
 - Optimierung des Modells
@@ -190,5 +173,5 @@ Per API sollen Abfragen auf die Bücher und eine Liste der Bücher möglich sein
   - der Tests
 
 ## Zusatzaufgaben IV
-  - Erzeugung eines OpenAPI Speziifikation auf Grundlage der vorherschenden API
+  - Erzeugung eines OpenAPI Spezifikation auf Grundlage der vorherrschenden API
   - Einarbeitung in die entsprechenden Annotations und dem Generator.
